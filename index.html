@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+  <head>
+    <title>~*@*^$ WOOOOOO !(#*%)!~</title>
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+    <style>
+    ::-webkit-scrollbar {
+    display: none;
+}
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #00ff00; font: 13px Helvetica, Arial; }
+      span {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 3px;
+        width: 100%;
+        transition: all .5s ease-in;
+      }
+      #wrapper {
+        height: 800px;
+      }
+      #wrapper:after {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        vertical-align: bottom;
+      }
+
+      #messages {
+        width: 500px;
+        list-style-type: none;
+        margin: 0;
+        padding: 20px 20px 20px 60px;
+        display: inline-block;
+        vertical-align: bottom;
+        position: relative;
+
+      }
+      #messages li {
+        color: #EEEEEE;
+        background: -webkit-linear-gradient(top, rgba(4,10,22,1) 0%,rgba(18,42,51,1) 100%);
+        position: relative;
+        width: 200px;
+        padding: 15px;
+        margin: 15px;
+        border-radius: 20px 20px 20px 0px;
+        font-family: 'Open Sans';
+        font-weight: 700;
+        font-size: 16px;
+        word-wrap: break-word;
+        transition: all 1s ease-out, transform .25s, opacity .44s ;
+        opacity: 0;
+      }
+      #messages li.init {
+        opacity: 0;
+        bottom: -20px;
+        transform: scale(1, 0);
+      }
+      #messages li.init2 {
+        opacity: 0;
+        width: 80px;
+        bottom: -20px;
+        transform: scale(1, 0);
+      }
+      #messages li.show {
+        opacity: 1;
+        bottom: 0;
+        transform: scale(1, 1);
+      }
+      #messages li.hide {
+        opacity: 0;
+        margin: 0px;
+        margin-left: -130px;
+      }
+      #messages li.bounce-up {
+        opacity: 1;
+        transform: translateY(30px);
+      }
+      #messages li.bounce-down {
+        opacity: 1;
+        transform: translateY(-30px);
+      }
+      #messages li:nth-child(odd) { }
+
+img {
+  transition: all .8s ease-in;
+}
+      .profile-pic {
+        opacity: 1;
+        height: 35px;
+        width: 35px;
+        border-radius: 20px;
+        position: absolute;
+        bottom: 0px;
+        margin-left: -55px;
+      }
+      .profile-pic-hide {
+        height: 35px;
+        width: 35px;
+        border-radius: 20px;
+        position: absolute;
+        bottom: 0px;
+        opacity: 0;
+        margin-left: -100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <ul id="messages"></ul>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.js"></script>
+       <script>
+          var animationDone = true;
+          var count = 0;
+          var time = 0;
+          var currTime = 0;
+          var socket = io();
+          socket.on('message', function(user, msg, img){
+          /*  if (animationDone == true) {
+              setTimeout(function(){ */
+              $('#messages').append(function() {
+                console.log("this is length: ", msg.length);
+                if (msg.length < 20) {
+                  return $('<li class="init" id="' + getTime(time) + '">' + img + '<span>' + user + '</span>' + msg + '</li>').attr('width','80px');
+                }
+                else {
+                  return $('<li class="init" id="' + getTime(time) + '">' + img + '<span>' + user + '</span>' + msg + '</li>');
+                }
+              });
+                  addTransition();
+            /*  }, 100);
+            }
+            else {
+              setTimeout(function(){
+              $('#messages').append($('<li class="init" id="' + getTime(time) + '">' + img + '<span>' + user + '</span>' + msg + '</li>'));
+                  addTransition();
+              }, 1000);
+            } */
+
+          count = $('li').length;
+          console.log(count);
+
+          if (Math.abs(count) >= 7) {
+            removeLi($('li:first'));
+          }
+         });
+
+        setInterval(checkTime, 100);
+        setInterval(updateScroll, 100);
+        function getTime(time) {
+          time = new Date();
+          time = time.getSeconds();
+          return time;
+        }
+        function checkTime(){
+          currTime = new Date();
+          currTime = currTime.getSeconds();
+          $('li').filter(function(index){
+            if (parseInt($(this).attr('id')) >= currTime){
+              if ( (parseInt($(this).attr('id')) - currTime) > 8) {
+                removeLi($('li:first'));
+              }
+            }
+            else {
+              if ( (currTime - parseInt($(this).attr('id'))) > 8) {
+                removeLi($('li:first'));
+              }
+            }
+          })
+        }
+        function addTime(){
+          $('li:not(:last-child):not(.hide)').filter( function(index){
+            var newID = parseInt($(this).attr('id'));
+            if (parseInt($(this).attr('id')) >= currTime){
+              if ( (parseInt($(this).attr('id')) - currTime) < 15) {
+                  newID += 1;
+                  $(this).attr('id', newID);
+              }
+            }
+            else {
+              if ( (currTime - parseInt($(this).attr('id'))) < 15) {
+                  newID += 1;
+                  $(this).attr('id', newID);
+              }
+            }
+          });
+        }
+        function removeLi(elem) {
+          if ($('li').length > 10) {
+            $('li:lt(5)').remove();
+            count = $('li').length;
+            return;
+          }
+          $('img.profile-pic', elem).attr('class', 'profile-pic-hide');
+          setTimeout(function(){
+             elem.attr('class', "hide")
+                setTimeout( function(){
+                  elem.remove();
+                }, 410);
+          }, 300);
+           count--;
+         }
+
+        function updateScroll(){
+            $(window).scrollTop(1000);
+        }
+
+        function addTransition() {
+          addTime();
+
+          setTimeout(function(){
+              $('li:last-child').attr('class', 'show');
+          }, 10);
+
+          $('li:not(:last-child):not(.hide)').makeBounce();
+        /*  setTimeout( function(){
+            $('li:not(:last-child):not(.hide)').attr('class','bounce-up');
+          }, 300);
+          setTimeout( function(){
+            $('li:not(:last-child):not(.hide)').attr('class','bounce-down');
+          }, 580);
+          setTimeout( function(){
+            $('li:not(:last-child):not(.hide)').attr('class','show');
+          }, 800); */
+
+        }
+
+$.fn.makeBounce = function() {
+  animationDone = false;
+    this.css({'transform' : 'translateY(12px)'});
+  var that = this;
+  this.queue(function() {
+    setTimeout(function() {
+      animationDone = false;
+      that.css({'transform' : 'translateY(-10px)'});
+      that.dequeue();
+      animationDone = true;
+    }, 180);
+  });
+  this.queue(function() {
+    setTimeout(function() {
+      animationDone = false;
+      that.css({'transform' : 'translateY(3px)'});
+      that.dequeue();
+      animationDone = true;
+    }, 220);
+  });
+  this.queue(function() {
+    setTimeout(function() {
+      animationDone = false;
+      that.css({'transform' : 'translateY(0)'});
+      that.dequeue();
+      animationDone = true;
+    }, 180);
+  });
+  animationDone = true;
+  return this;
+}
+
+       </script>
+
+  </body>
+</html>
